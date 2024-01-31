@@ -1,33 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from "react"
+import { getMoviesPanel } from "./fetchMovies";
 import './App.css'
 
+
+interface Movie {
+  title: string;
+  year: number;
+  id: number;
+  release_date: number;
+  poster_path: ImageBitmap;
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+const [movies, setMovies] = useState<Movie[]>([])
+
+  useEffect(() => {
+
+    // getPopularMovies()
+    getMoviesPanel()
+      .then((data) => {
+        console.log(data);
+        const movieList = data.results || [];
+        setMovies(movieList)
+      })
+    // getPopularMovies()
+    // .then((data)=>{
+    //     data.json().then((panel)=>{
+    //       console.log(panel)
+    //       setMovies(panel.results)
+
+    //     })    
+    // })
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <header>
+      <h1>Movie World</h1>
+      </header>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <>
+        {movies.map((movie) => (
+          <div key={movie.id}>
+            <li>
+            {/* Renderiza aquí la información de cada película */}
+              <img
+                src={`https://image.tmdb.org/t/p/w200/${movie.poster_path}`} />
+            </li>
+            <p>{movie.title}</p>
+            <p>{movie.release_date}</p>
+          </div>
+        ))}
+      </>
     </>
   )
 }
